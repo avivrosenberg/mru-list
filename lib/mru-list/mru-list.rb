@@ -56,6 +56,12 @@ module MRUList
     end
 
     ###
+    # Returns the least recently used item in the MRU list.
+    def lru
+      @list.last
+    end
+
+    ###
     # Number of current MRU items
     def length
       @list.length

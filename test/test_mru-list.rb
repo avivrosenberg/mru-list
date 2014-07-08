@@ -54,6 +54,24 @@ module TestMRUList
     end
   end
 
+  class TestLRU < MiniTest::Unit::TestCase
+    def setup
+      @mrulist = MRUList.new(3)
+    end
+
+    def test_lru
+      (1..10).each do |i|
+        @mrulist.promote i
+
+        if i <= @mrulist.size
+          assert_equal 1, @mrulist.lru
+        else
+          assert_equal i-@mrulist.size+1, @mrulist.lru
+        end
+      end
+    end
+  end
+
   class TestEnumerable < MiniTest::Unit::TestCase
     def setup
       @mrulist = MRUList.new(3)
