@@ -142,6 +142,13 @@ module TestMRUList
       assert_equal [6,4,2], list
     end
 
+    def test_promote_return_value
+      (5..15).each do |i|
+        retval = @mrulist.promote i
+        assert_equal i, retval
+      end
+    end
+
   end
 
 end
