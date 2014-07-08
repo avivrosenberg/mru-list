@@ -1,5 +1,2 @@
 require "mru-list/version"
-
-module MRUList
-  # Your code goes here...
-end
+require "mru-list/mru-list"
