@@ -93,9 +93,11 @@ module TestMRUList
     def setup
       @added = nil
       @removed = nil
+      @promoted = nil
       @mrulist = MRUList.new(3,
                              onadd: lambda {|x| @added = x},
-                             onremove: lambda {|x| @removed = x})
+                             onremove: lambda {|x| @removed = x},
+                             onpromote: lambda {|x| @promoted = x})
     end
 
     def assert_added(item)
@@ -106,6 +108,11 @@ module TestMRUList
     def assert_removed(item)
       assert_equal item, @removed
       @removed = nil
+    end
+
+    def assert_promoted(item)
+      assert_equal item, @promoted
+      @promoted = nil
     end
 
     def test_promote_onadd
@@ -128,6 +135,27 @@ module TestMRUList
 
         if i > @mrulist.size
           assert_removed(i-@mrulist.size)
+        end
+      end
+    end
+
+    def test_promote_onpromote
+      items = [1, 2, 7, 2, 6, 4, 6]
+
+      items.each.with_index do |i, idx|
+        @mrulist.promote i
+
+        # make sure either onpromote or on add are called, not both
+        case
+        when idx == 3
+          assert_promoted 2
+          assert_added nil
+        when idx == 6
+          assert_promoted 6
+          assert_added nil
+        else
+          assert_promoted nil
+          assert_added i
         end
       end
     end

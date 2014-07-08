@@ -12,14 +12,16 @@ module MRUList
     ###
     # size - number of recently used items to keep
     # onadd - Proc to run when a new item is added to the MRU list
-    # onremove - Proc to run when a new item is removed from the MRU list
-    def initialize(size, callbacks = {onadd: nil, onremove: nil})
+    # onremove - Proc to run when an existing item is removed from the MRU list
+    # onpromote - Proc to run when an existing item is promoted to the front of the MRU list
+    def initialize(size, callbacks = {onadd: nil, onremove: nil, onpromote: nil})
       @size = size
       @list = []
 
       # default the callbacks to no-op
       @onadd = callbacks[:onadd] || NOP
       @onremove = callbacks[:onremove] || NOP
+      @onpromote = callbacks[:onpromote] || NOP
     end
 
     ###
@@ -33,6 +35,8 @@ module MRUList
         # move to top of MRU list
         @list.delete_at idx
         @list.unshift item
+        @onpromote.call(item)
+        return item
       else
 
         if @list.length == @size
